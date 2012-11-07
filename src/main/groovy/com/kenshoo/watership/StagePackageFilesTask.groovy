@@ -18,11 +18,6 @@ package com.kenshoo.watership
 import org.gradle.api.DefaultTask
 import org.gradle.api.tasks.TaskAction
 
-/**
- * User: liorh
- * Date: 11/5/12
- * Time: 5:42 PM
- */
 class StagePackageFilesTask extends DefaultTask {
     def stageDir
 

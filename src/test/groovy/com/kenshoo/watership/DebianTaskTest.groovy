@@ -21,11 +21,6 @@ import org.gradle.api.tasks.TaskExecutionException
 import org.gradle.testfixtures.ProjectBuilder
 import spock.lang.Specification
 
-/**
- * User: liorh
- * Date: 11/5/12
- * Time: 9:58 PM
- */
 class DebianTaskTest extends Specification{
     def baseDir
     def stageDir

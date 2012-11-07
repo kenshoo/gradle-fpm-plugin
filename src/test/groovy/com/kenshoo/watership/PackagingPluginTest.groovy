@@ -19,11 +19,6 @@ import org.gradle.api.Project
 import org.gradle.testfixtures.ProjectBuilder
 import spock.lang.Specification
 
-/**
- * User: lior
- * Date: 11/6/12
- * Time: 3:27 PM
- */
 class PackagingPluginTest extends Specification{
         def 'packaginPluginAdsDebianTaskToProject'() {
         given:

@@ -19,11 +19,6 @@ import groovy.io.FileType
 import org.gradle.api.DefaultTask
 import org.gradle.api.tasks.TaskAction
 
-/**
- * User: liorh
- * Date: 11/7/12
- * Time: 5:38 PM
- */
 abstract class PackagingTask extends DefaultTask {
     def FPM = "fpm"
     def stageDir

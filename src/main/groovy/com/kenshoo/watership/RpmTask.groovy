@@ -15,11 +15,6 @@
 */
 package com.kenshoo.watership
 
-/**
- * User: liorh
- * Date: 11/7/12
- * Time: 5:44 PM
- */
 class RpmTask extends PackagingTask{
     RpmTask() {
         super('rpm')

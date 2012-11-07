@@ -23,7 +23,7 @@ class PackagingPlugin implements Plugin<Project> {
 
     @Override
     void apply(Project project) {
-        project.extensions.create('debian', DebianPluginExtension)
+        project.extensions.create('debian', PackagingPluginExtension)
         project.debian.sourceDirs = [project.libsDir, project.sourceSets.main.output.resourcesDir]
         def stageDir = project.buildDir.absolutePath + STAGE_PATH
         def root = project.rootProject
