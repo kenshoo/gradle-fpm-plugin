@@ -18,14 +18,7 @@ package com.kenshoo.watership
 
 import org.gradle.api.tasks.Input
 
-/**
- * Created with IntelliJ IDEA.
- * User: avihay
- * Date: 11/6/12
- * Time: 4:50 PM
- * To change this template use File | Settings | File Templates.
- */
-class DebianPluginExtension {
+class PackagingPluginExtension {
     @Input
     def dependencies = []
 
