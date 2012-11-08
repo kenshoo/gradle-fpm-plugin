@@ -49,8 +49,8 @@ abstract class PackagingTask extends DefaultTask {
     }
 
     def getArgs() {
-        def debVersion = project.version.replace("-SNAPSHOT", "")
-        def fpmArgs = ["-t", type, "-s", "dir", "-n", "${project.name}", "-v", "$debVersion","-C", baseDir]
+        def version = project.version.replace("-SNAPSHOT", "")
+        def fpmArgs = ["-t", type, "-s", "dir", "-n", "${project.name}", "-v", "$version","-C", baseDir]
         if (prefix)
             fpmArgs.addAll(["--prefix", prefix])
         dependencies.each() {
@@ -76,15 +76,16 @@ abstract class PackagingTask extends DefaultTask {
     }
 
     def initConfiguration() {
-        dependencies = project.debian.dependencies
-        prefix = project.debian.prefix
-        filesArgs = project.debian.filesArgs ? project.debian.filesArgs : "."
-        baseDir = project.debian.baseDir? project.debian.baseDir : project.buildDir
+        dependencies = project.packaging.dependencies
+        prefix = project.packaging.prefix
+        filesArgs = project.packaging.filesArgs ? project.packaging.filesArgs : "."
+        baseDir = project.packaging.baseDir? project.packaging.baseDir : project.buildDir
     }
 
     def createOutDir() {
-        def outDir = new File(project.buildDir, "/deb")
-        outDir.mkdir()
+        def outDir = project.packaging.packageDir
+        if (!outDir.exists())
+            outDir.mkdirs()
         outDir
     }
 }

@@ -19,13 +19,13 @@ import org.gradle.api.Plugin
 import org.gradle.api.Project
 
 class PackagingPlugin implements Plugin<Project> {
-    public static final String STAGE_PATH = "/package-stage"
 
     @Override
     void apply(Project project) {
-        project.extensions.create('debian', PackagingPluginExtension)
-        def debTask = project.task('debian', group: 'Build', type: DebianTask)
-        def rpmTask = project.task('rpm', group: 'Build', type: RpmTask)
+        project.extensions.create('packaging', PackagingPluginExtension)
+        project.packaging.packageDir = new File(project.buildDir, "/linux-package")
+        project.task('debian', group: 'Build', type: DebianTask)
+        project.task('rpm', group: 'Build', type: RpmTask)
 
     }
 
