@@ -1,0 +1,13 @@
+# vim
+.*.sw[a-z]
+
+# build byproducts
+build-*/*
+fpm.wiki
+*.gem
+
+# python
+*.pyc
+
+# RVM
+.rvmrc

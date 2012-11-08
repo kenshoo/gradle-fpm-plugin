@@ -18,6 +18,9 @@ package com.kenshoo.watership
 import groovy.io.FileType
 import org.gradle.api.DefaultTask
 import org.gradle.api.tasks.TaskAction
+import org.jruby.embed.ScriptingContainer
+import org.jruby.embed.LocalContextScope
+import org.jruby.embed.LocalVariableBehavior
 
 abstract class PackagingTask extends DefaultTask {
     def FPM = "fpm"
@@ -37,11 +40,29 @@ abstract class PackagingTask extends DefaultTask {
 
         Object fpmArgs = getArgs()
         try{
-            project.exec {
+            def paths = new ArrayList();
+            paths.add("fpm/gems/arr-pm-0.0.7/lib/");
+            paths.add("fpm/gems/backports-2.6.2/lib/");
+            paths.add("fpm/gems/cabin-0.4.4/lib/");
+            paths.add("fpm/gems/clamp-0.3.1/lib/");
+            paths.add("fpm/gems/fpm-0.4.20/lib/");
+            paths.add("fpm/gems/json-1.6.6-java/lib/");
+            def sc = new ScriptingContainer(LocalVariableBehavior.PERSISTENT);
+            sc.setLoadPaths(paths);
+            sc.runScriptlet("require 'rubygems'")
+            sc.runScriptlet("require 'fpm'")
+            sc.runScriptlet("pkg = FPM::Package::Gem.new")
+            sc.runScriptlet("pkg.input('${stageDir.getAbsoluteFile()}')")
+            sc.runScriptlet("p = pkg.convert(FPM::Package::${type})")
+            sc.runScriptlet("p.name = ${project.name}")
+            sc.runScriptlet("p.version = ${debVersion}")
+            sc.runScriptlet("begin; p.output(rpm.to_s(${outDir.getAbsolutePath()}${File.separator}${project.name})); ensure; p.cleanup; end")
+            
+            /*project.exec {
                 commandLine FPM
                 args fpmArgs
                 workingDir outDir.getAbsolutePath()
-            }
+            }*/
         } catch (e) {
             if (e.cause instanceof IOException) throw new RuntimeException("make sure fpm is installed and available", e) else throw e
         }

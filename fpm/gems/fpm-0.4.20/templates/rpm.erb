@@ -1,0 +1,132 @@
+# Disable the stupid stuff rpm distros include in the build process by default:
+<% %w(prep build install clean).each do |step| -%>
+<%# These definitions have to be non-empty... I guess... -%>
+#   Disable any <%= step %> shell actions. replace them with simply 'true'
+%define __spec_<%= step %>_post true
+%define __spec_<%= step %>_pre true
+<% end -%>
+# Disable checking for unpackaged files ?
+#%undefine __check_files
+
+# Use <%= attributes[:rpm_digest] %> file digest method
+%define _binary_filedigest_algorithm <%= digest_algorithm %>
+
+# Use <%= attributes[:rpm_compression] %> payload compression
+%define _binary_payload <%= payload_compression %> 
+
+Name: <%= name %>
+Version: <%= version %>
+<% if epoch -%>
+Epoch: <%= epoch %>
+<% end -%>
+Release: <%= iteration or 1 %>
+<%# use the first line of the description as the summary -%>
+Summary: <%= description.split("\n").first.empty? ? "_" :  description.split("\n").first %>
+BuildArch: <%= architecture %>
+AutoReqProv: no
+# Seems specifying BuildRoot is required on older rpmbuild (like on CentOS 5)
+# fpm passes '--define buildroot ...' on the commandline, so just reuse that.
+BuildRoot: %buildroot
+<% if !prefix.nil? and !prefix.empty? %>
+Prefix: <%= prefix %>
+<% end -%>
+
+Group: <%= category %>
+<%# Sometimes the 'license' field has multiple lines... Hack around it. 
+  # While technically yes this means we are 'modifying' the license,
+  # since the job of FPM is to get shit done and that this is  only
+  # modifying whitespace, it should be reasonably OK. -%>
+License: <%= license.gsub("\n", " ") %>
+<% if !vendor.nil? and !vendor.empty? -%>
+Vendor: <%= vendor %>
+<% end -%>
+URL: <%= url or "http://nourlgiven.example.com/" %>
+Packager: <%= maintainer %>
+
+<% dependencies.each do |req| -%>
+Requires: <%= req %>
+<% end -%>
+<% provides.each do |prov| -%>
+Provides: <%= prov %>
+<% end -%>
+<% conflicts.each do |conflict| -%>
+Conflicts: <%= conflict %>
+<% end -%>
+<% replaces.each do |repl| -%>
+<%# The closes equivalent in RPM to "replaces" is "Obsoletes" -%>
+Obsoletes: <%= repl %>
+<% end -%>
+<%# rpm rejects descriptions with blank lines (even between content), so hack
+    around it by replacing blank lines with ' .' -%>
+%description
+<%= description.gsub(/^\s*$/, " .") %>
+
+%prep
+# noop
+
+%build
+# noop
+
+%install
+<% files.each do |path| -%>
+<%   source = Shellwords.shellescape(File.join(staging_path, path)).gsub("%", "%%") -%>
+<%   # Copy to the build_path/BUILD/ to make rpmbuild happy -%>
+<%   target = Shellwords.shellescape(File.join(build_path, build_sub_dir, path)).gsub("%", "%%") -%>
+<%   dir = File.dirname(target) %>
+mkdir -p <%= dir %>
+if [ -f <%= source %> ] || [ -h <%= source %> ] ; then
+  cp -d <%= source %> <%= target %>
+elif [ -d <%= source %> ] ; then
+  mkdir <%= target %>
+fi
+<% end %>
+
+%clean
+# noop
+
+<%# This next section puts any %pre, %post, %preun, or %postun scripts %>
+<% 
+  scriptmap = {
+    :before_install => "pre",
+    :after_install => "post",
+    :before_remove => "preun",
+    :after_remove => "postun",
+  }
+  scriptmap.each do |name, rpmname| 
+-%>
+<%   if script?(name) -%>
+%<%= rpmname %>
+<%= script(name) %>
+
+<%   end -%>
+<% end -%>
+
+%files
+%defattr(-,<%= attributes[:rpm_user] %>,<%= attributes[:rpm_group] %>,-)
+<%# Output config files and then regular files. -%>
+<% config_files.each do |path| -%>
+%config(noreplace) <%= File.join(prefix, path) %>
+<% end -%>
+<%# list only files, not directories? -%>
+<%= 
+  # Reject config files already listed or parent directories, then prefix files
+  # with "/", then make sure paths with spaces are quoted. I hate rpm so much.
+
+  # 'files' here is the method FPM::Package#files.
+  # The 'files' section of rpm can be 
+  # Replace [ with [\[] to make rpm not use globs
+  # Replace * with [*] to make rpm not use globs
+  # Replace ? with [?] to make rpm not use globs
+  # Replace % with [%] to make rpm not expand macros
+  files.collect { |f| "/#{f}" } \
+    .reject { |f| config_files.include?(f) } \
+    .collect { |f| f[/\s/] and "\"#{f}\"" or f } \
+    .collect { |f| f.gsub("[", "[\\[]") } \
+    .collect { |f| f.gsub("*", "[*]") } \
+    .collect { |f| f.gsub("?", "[?]") } \
+    .collect { |f| f.gsub("%", "[%]") } \
+    .join("\n")
+    #.collect { |f| File.join(prefix, f) } \
+%>
+
+%changelog

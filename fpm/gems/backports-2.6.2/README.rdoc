@@ -1,0 +1,272 @@
+= Backports Library
+
+* Yearning to use some of the new cool features in 1.9.3 while using 1.8.6?
+* One of your client is stuck with Ruby 1.8.6 but you want to use a gem using some features of 1.8.7?
+* Can't remember if you can use Array#sample or String#each_char on a friend's box?
+
+This gem is for you!
+
+The goal of 'backports' is to make it easier to write ruby code that runs across different versions of Ruby. All you need to bring any version of Ruby up to today's standards:
+
+  require 'backports'
+  
+This will bring in all the features of 1.8.7 (for Ruby 1.8.6) and many features of Ruby 1.9.1 (for Ruby 1.8.x), Ruby 1.9.2 and Ruby 1.9.3 (for all earlier versions)!
+
++Note+: Although I am a Ruby committer, this gem is a personal project and is not endorsed by ruby-core.
+
+== What's inside
+
+Features in this gem:
+1. Won't break older code
+2. Pure Ruby (no C extensions)
+3. Pass RubySpec[http://github.com/rubyspec/rubyspec]
+
+Let's be a bit more precise about the breaking code business. It is of course entirely possible that code will break, for example some core methods are monkeypatched or if the code relies on a certain call raising an exception. Example: <tt>[42].sample rescue "dum example"</tt> will return <tt>"dum example"</tt> without this gem and <tt>42</tt> with it.
+
+A real incompatibility is, for example, <tt>Module::instance_methods</tt> which returns strings in 1.8 and symbols in 1.9. No change can be made without the risk of breaking existing code. Such incompatibilities are left unchanged, although you can require some of these changes in addition (see below)
+
+All features of 1.8.7 are backported (well, almost all, see the exception list bellow), and many of 1.9 are also.
+
+Some generic and self-contained features of active-support are also included. By simple I mean that String#camelcase is there, but #pluralize isn't.
+
+== Installation & compatibility
+
++backports+ is can be installed with:
+
+  (sudo) gem install backports
+
+To use:
+
+  require 'rubygems'
+  require 'backports'   # or a subset, see next section
+
+Compatible with Ruby 1.8.6, 1.8.7, 1.9.1, 1.9.2, 1.9.3, JRuby and Rubinius.
+
+= Complete List of backports
+
+== Ruby 1.8.7
+
+Complete Ruby 1.8.7 backporting (core language). Refer to the official list of changes[http://svn.ruby-lang.org/repos/ruby/branches/ruby_1_8_7/NEWS].
+
+Only exceptions:
+* String#gsub (the form returning an enumerator)
+* GC.stress=  (not implemented)
+* Array#choice (removed in 1.8.8, use Array#sample instead)
+
+To include _only_ these backports, <tt>require "backports/1.8.7"</tt>
+
+== Ruby 1.8.8
+
+Ruby 1.8.8 has been officially cancelled. As of version 2.2, <tt>require "backports/1.8.8"</tt> does nothing.
+
+== Ruby 1.9.1
+
+Additionally, the following Ruby 1.9 features have been backported:
+* Array
+  * +try_convert+
+
+* Enumerable
+  * +each_with_object+
+
+* Enumerator
+  * +new+ (with block)
+
+* File
+  * +binread+
+  * +to_path+
+  * All class methods accepting filenames will accept files or anything with a <tt>#to_path</tt> method.
+  * <tt>File.open</tt> accepts an options hash.
+
+* Float
+  * +round+
+
+* Hash
+  * +assoc+, +rassoc+
+  * +try_convert+
+  * <tt>default_proc=</tt>
+
+* Integer
+  * +magnitude+
+  * +round+
+
+* IO
+  * +bin_read+
+  * +try_convert+
+  * +ungetbyte+
+  * <tt>IO.open</tt> accepts an options hash.
+
+* Kernel
+  * +require_relative+
+
+* Math
+  * +log+ (with base)
+  * +log2+
+
+* Numeric
+  * +round+
+
+* Object
+  * +define_singleton_method+
+  * +public_method+
+  * +public_send+
+
+* Proc
+  * +yield+
+  * +lambda?+
+  * +curry+
+  * <tt>===</tt>
+
+* Range
+  * <tt>cover?</tt>
+
+* Regexp
+  * +try_convert+
+
+* String
+  * <tt>ascii_only?</tt>
+  * +chr+
+  * +clear+
+  * +codepoints+, +each_codepoint+
+  * +get_byte+, +set_byte+
+  * +ord+
+  * +try_convert+
+
++Enumerator+ can be accessed directly (instead of <tt>Enumerable::Enumerator</tt>)
+
+To include _only_ these backports and those of the 1.8 line, <tt>require "backports/1.9.1"</tt>.
+
+Moreover, a pretty good imitation of BasicObject is available,
+but since it is only an imitation, it must be required explicitly:
+
+  require 'backports/basic_object'
+
+== Ruby 1.9.2
+
+Finally, most of Ruby 1.9.2 features have been backported:
+
+* Array
+  * <tt>rotate, rotate!</tt>
+  * <tt>keep_if, select!</tt>
+  * +product+ (with block)
+  * +repeated_combination+, +repeated_permutation+
+  * <tt>sort_by!</tt>
+  * <tt>uniq, uniq!</tt> (with block)
+
+* Complex
+  * +to_r+
+
+* Dir
+  * +home+
+
+* Enumerable
+  * +chunk+
+  * +flat_map+, +collect_concat+
+  * +join+
+  * +slice_before+
+
+* Float::INFINITY, NAN
+
+* Hash
+  * +keep_if+, <tt>select!</tt>
+
+* Object
+  * <tt>singleton_class</tt>
+
+* Random (new class)
+
+To include all Ruby backports but not those of Rails, <tt>require "backports/1.9.2"</tt> (or "backports/1.9")
+
+== Ruby 1.9.3
+
+Some features of Ruby 1.9.3 have been backported:
+
+* File
+  * +NULL+
+* IO
+  * +advise+ (acts as a noop)
+  * +write+, +binwrite+
+* String
+  * +byteslice+
+  * +prepend+
+
+== Rails
+
+Some generic methods from Rails methods have been copied:
+
+* Enumerable
+  * +sum+
+
+* Hash
+  * +symbolize_keys+, <tt>symbolize_keys!</tt>
+  * +reverse_merge+, <tt>reverse_merge!</tt>
+
+* Module
+  * +alias_method_chain+
+
+* Object
+  * +try+
+  * +returning+
+
+* String
+  * +camelize+, +underscore+
+  * +dasherize+, +demodulize+
+  * +constantize+
+
+To include _only_ these Rails backports but not those of Ruby, <tt>require "backports/rails"</tt>.
+
+== Libraries
+
+Libraries are slowly being backported. You simply require them as usual, ideally (but not necessarily) after requiring backports.
+
+  require "backports"
+  require "prime"
+  42.prime? # => false, even in Ruby 1.8.x
+
+The following libraries are up to date with Ruby 1.9.3:
+
+* Matrix
+* Prime
+* Set
+
+I am aware of the following backport gem which will hopefully be part of backports soon:
+
+* Net::SMTP for Ruby 1.8.6: smtp_tls[http://seattlerb.rubyforge.org/smtp_tls/]
+
+== Forcing incompatibilities
+
+Some backports would create incompatibilities in their current Ruby version but could be useful in some projects. It is possible to request such incompatible changes. Backports currently supports the following:
+
+* Hash
+  * +select+ (returns a Hash instead of an Array)
+
+* Enumerable / Array
+  * +map+ (returns an enumerator when called without a block)
+
+* String
+  * +length+, +size+ (for UTF-8 support)
+
+These must be imported in addition to the backports gem, for example:
+
+  require "backports"
+  require "backports/force/hash_select"
+  {}.select{} # => {}, even in Ruby 1.8
+
+== Thanks
+
+Thanks for the bug reports and patches, in particular the repeat offenders:
+
+* Arto Bendiken ( bendiken[http://github.com/bendiken] )
+* Konstantin Haase ( rkh[https://github.com/rkh])
+* Roger Pack ( rdp[http://github.com/rdp] )
+
+The best way to submit a patch is to also submit a patch to RubySpec[https://github.com/rubyspec/rubyspec] and then a patch to backports that make it pass the spec. To test rubyspec along with backports, one way to test this is:
+
+    mspec path/to/specs -t path/to/ruby186 --unguarded -r path/to/backports 
+
+You must then check manually for which failures are acceptable and which are not.
+
+= License
+
++backports+ is released under the terms of the MIT License, see the included LICENSE file.
+
+Author::                 Marc-André Lafortune

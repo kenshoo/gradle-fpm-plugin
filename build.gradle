@@ -25,6 +25,9 @@ apply plugin: 'maven'
 buildscript {
     repositories {
         mavenCentral()
+        maven {
+          url 'http://repository.codehaus.org'
+        }
     }
 
     dependencies {
@@ -37,9 +40,15 @@ repositories {
 }
 
 dependencies {
+    compile 'org.jruby:jruby-complete:1.6.8'
     testCompile 'org.spockframework:spock-core:0.6-groovy-1.8'
 
 }
+
+task wrapper(type: Wrapper) {
+  gradleVersion = '1.2'
+}
+
 
 apply plugin: 'nexus'
 
