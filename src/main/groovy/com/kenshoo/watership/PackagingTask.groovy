@@ -15,16 +15,16 @@
 */
 package com.kenshoo.watership
 
-import groovy.io.FileType
 import org.gradle.api.DefaultTask
 import org.gradle.api.tasks.TaskAction
 
 abstract class PackagingTask extends DefaultTask {
     def FPM = "fpm"
-    def stageDir
-    def dependencies = []
+    def dependencies
     def prefix
     def type
+    def baseDir
+    def filesArgs
 
     PackagingTask(String type){
         this.type = type
@@ -35,7 +35,8 @@ abstract class PackagingTask extends DefaultTask {
         initConfiguration()
         def outDir = createOutDir()
 
-        Object fpmArgs = getArgs()
+        def fpmArgs = getArgs()
+        logger.info('running fpm with: ' + fpmArgs)
         try{
             project.exec {
                 commandLine FPM
@@ -48,9 +49,8 @@ abstract class PackagingTask extends DefaultTask {
     }
 
     def getArgs() {
-        def stageDir = getStageDir()
         def debVersion = project.version.replace("-SNAPSHOT", "")
-        def fpmArgs = ["-t", type, "-s", "dir", "-n", "${project.name}", "-v", "$debVersion", "-C", stageDir.getAbsoluteFile()]
+        def fpmArgs = ["-t", type, "-s", "dir", "-n", "${project.name}", "-v", "$debVersion","-C", baseDir]
         if (prefix)
             fpmArgs.addAll(["--prefix", prefix])
         dependencies.each() {
@@ -65,8 +65,12 @@ abstract class PackagingTask extends DefaultTask {
 
     def getStageFiles(){
         def arr=[]
-        stageDir.eachFileRecurse(FileType.FILES) { file->
-            arr << file.path[stageDir.path.size() + 1..-1]
+        if (filesArgs instanceof Collection) {
+            filesArgs.each {
+                arr << it
+            }
+        } else {
+            arr << filesArgs
         }
         arr
     }
@@ -74,6 +78,8 @@ abstract class PackagingTask extends DefaultTask {
     def initConfiguration() {
         dependencies = project.debian.dependencies
         prefix = project.debian.prefix
+        filesArgs = project.debian.filesArgs ? project.debian.filesArgs : "."
+        baseDir = project.debian.baseDir? project.debian.baseDir : project.buildDir
     }
 
     def createOutDir() {
@@ -82,4 +88,3 @@ abstract class PackagingTask extends DefaultTask {
         outDir
     }
 }
-

@@ -42,12 +42,8 @@ class DebianTaskTest extends Specification{
             project.apply plugin:  'java'
             project.apply plugin: 'fpm-packaging'
             project.version = '0.1.6-SNAPSHOT'
-            File yamlFile = new File(stageDir, 'test.yml')
-            yamlFile.createNewFile()
-            File jarFile = new File(stageDir, 'test-0.1.6-SNAPSHOT.jar')
-            jarFile.createNewFile()
-            def task =project.tasks["debian"]
-            task.stageDir = stageDir
+            def task = project.tasks["debian"]
+
         when:
             task.execute()
         then:
@@ -60,12 +56,7 @@ class DebianTaskTest extends Specification{
             project.apply plugin:  'java'
             project.apply plugin: 'fpm-packaging'
             project.version = '0.1.6-SNAPSHOT'
-            File yamlFile = new File(stageDir, 'test.yml')
-            yamlFile.createNewFile()
-            File jarFile = new File(stageDir, 'test-0.1.6-SNAPSHOT.jar')
-            jarFile.createNewFile()
             def task =project.tasks["debian"]
-            task.stageDir = stageDir
             task.FPM = "not"
             when:
             task.execute()
@@ -86,15 +77,16 @@ class DebianTaskTest extends Specification{
             dir.mkdir()
             File file2 = new File(dir, "file2")
             file2.createNewFile()
+            project.debian.baseDir = stageDir.absolutePath
+            project.debian.filesArgs = ['dir' , 'file1']
             def task =project.tasks["debian"]
-            task.stageDir = stageDir
+
         when:
             task.execute()
             def args = task.getArgs()
         then:
+            args.contains('dir')
             args.contains('file1')
-            args.contains('dir/file2')
-            !args.contains('--prefix')
     }
 
     def 'args contain prefix and deps when given'() {
@@ -107,7 +99,6 @@ class DebianTaskTest extends Specification{
             project.version = '0.1.6-SNAPSHOT'
             new File(stageDir, 'file1').createNewFile()
             def task =project.tasks["debian"]
-            task.stageDir = stageDir
         when:
             task.execute()
             def args = task.getArgs()
