@@ -26,5 +26,8 @@ class PackagingPluginExtension {
     def prefix
 
     @Input
-    def sourceDirs
+    def filesArgs
+
+    @Input
+    def baseDir
 }
