@@ -47,7 +47,7 @@ class DebianTaskTest extends Specification{
         when:
             task.execute()
         then:
-            new File(baseDir,'/build/deb/test_0.1.6_amd64.deb').exists()
+            new File(baseDir,'/build/linux-package/test_0.1.6_amd64.deb').exists()
     }
 
     def 'gets fpm not installed message'() {
@@ -62,7 +62,7 @@ class DebianTaskTest extends Specification{
             task.execute()
         then:
             thrown(TaskExecutionException)
-            !(new File(baseDir,'/build/deb/test_0.1.6_amd64.deb').exists())
+            !(new File(baseDir,'/build/linux-package/test_0.1.6_amd64.deb').exists())
     }
 
     def 'file args contain relative path of files'() {
@@ -77,8 +77,8 @@ class DebianTaskTest extends Specification{
             dir.mkdir()
             File file2 = new File(dir, "file2")
             file2.createNewFile()
-            project.debian.baseDir = stageDir.absolutePath
-            project.debian.filesArgs = ['dir' , 'file1']
+            project.packaging.baseDir = stageDir.absolutePath
+            project.packaging.filesArgs = ['dir' , 'file1']
             def task =project.tasks["debian"]
 
         when:
@@ -94,8 +94,8 @@ class DebianTaskTest extends Specification{
             Project project = ProjectBuilder.builder().withProjectDir(baseDir).build()
             project.apply plugin:  'java'
             project.apply plugin: 'fpm-packaging'
-            project.debian.prefix = "/opt/xxx/yyy"
-            project.debian.dependencies = ['cassandra', 'java7']
+            project.packaging.prefix = "/opt/xxx/yyy"
+            project.packaging.dependencies = ['cassandra', 'java7']
             project.version = '0.1.6-SNAPSHOT'
             new File(stageDir, 'file1').createNewFile()
             def task =project.tasks["debian"]
