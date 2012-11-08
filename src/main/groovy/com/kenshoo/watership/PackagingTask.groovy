@@ -53,7 +53,7 @@ abstract class PackagingTask extends DefaultTask {
             sc.runScriptlet("require 'rubygems'")
             sc.runScriptlet("require 'fpm'")
             sc.runScriptlet("pkg = FPM::Package::Gem.new")
-            sc.runScriptlet("pkg.input('${stageDir.getAbsoluteFile()}')")
+            sc.runScriptlet("pkg.input('${baseDir}')")
             sc.runScriptlet("p = pkg.convert(FPM::Package::${type})")
             sc.runScriptlet("p.name = ${project.name}")
             sc.runScriptlet("p.version = ${debVersion}")
