@@ -24,15 +24,9 @@ class PackagingPlugin implements Plugin<Project> {
     @Override
     void apply(Project project) {
         project.extensions.create('debian', PackagingPluginExtension)
-        project.debian.sourceDirs = [project.libsDir, project.sourceSets.main.output.resourcesDir]
-        def stageDir = project.buildDir.absolutePath + STAGE_PATH
-        def root = project.rootProject
-        project.task('stagePackageFiles', group: 'Build', type: StagePackageFilesTask, dependsOn: root.tasks.build)
-        def debTask = project.task('debian', group: 'Build', type: DebianTask, dependsOn: root.tasks.stagePackageFiles)
-        debTask.stageDir = new File(stageDir)
+        def debTask = project.task('debian', group: 'Build', type: DebianTask)
+        def rpmTask = project.task('rpm', group: 'Build', type: RpmTask)
 
-        def rpmTask = project.task('rpm', group: 'Build', type: RpmTask, dependsOn: root.tasks.stagePackageFiles)
-        rpmTask.stageDir = new File(stageDir)
     }
 
 }

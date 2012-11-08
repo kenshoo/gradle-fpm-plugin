@@ -28,6 +28,6 @@ class PackagingPluginTest extends Specification{
            project.apply plugin: 'fpm-packaging'
         then:
             project.tasks.debian instanceof DebianTask
-            project.tasks.debian.stageDir != null
+            project.tasks.rpm instanceof RpmTask
     }
 }
