@@ -49,7 +49,7 @@ abstract class PackagingTask extends DefaultTask {
     }
 
     def getArgs() {
-        def version = project.version.replace("-SNAPSHOT", "")
+        def version = project.version
         def fpmArgs = ["-t", type, "-s", "dir", "-n", "${project.name}", "-v", "$version","-C", baseDir]
         if (prefix)
             fpmArgs.addAll(["--prefix", prefix])
