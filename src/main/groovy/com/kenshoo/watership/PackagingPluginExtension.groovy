@@ -17,6 +17,7 @@
 package com.kenshoo.watership
 
 import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.OutputDirectory
 
 class PackagingPluginExtension {
     @Input
@@ -30,4 +31,7 @@ class PackagingPluginExtension {
 
     @Input
     def baseDir
+
+    @OutputDirectory
+    def packageDir
 }

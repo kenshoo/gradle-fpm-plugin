@@ -49,8 +49,5 @@ task wrapper(type: Wrapper) {
   gradleVersion = '1.2'
 }
 
-
-apply plugin: 'nexus'
-
-group = 'com.kenshoo.watership'
-version = '0.1'
+group = 'com.kenshoo'
+version = '0.2'
