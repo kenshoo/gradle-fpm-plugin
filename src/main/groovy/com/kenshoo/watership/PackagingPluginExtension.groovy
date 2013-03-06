@@ -34,4 +34,7 @@ class PackagingPluginExtension {
 
     @OutputDirectory
     def packageDir
+
+    @Input
+    def extraOptions
 }

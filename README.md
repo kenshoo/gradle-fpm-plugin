@@ -10,20 +10,21 @@ you must have fpm installed and available
 // Grab the plugin from a Maven Repo automatically
 buildscript {
     repositories {
-    mavenCentral()
+        mavenCentral()
     }
     dependencies {
         classpath 'com.kenshoo:gradle-fpm:0.2'
     }
 }
 
- apply plugin: 'fpm-packaging'
+apply plugin: 'fpm-packaging'
 
 //to create deb package
-debian {
-    dependecies = ['openjdk-6-jre', 'tomcat7'] //Optional, an array of package dependencies
+packaging {
+    dependencies = ['openjdk-6-jre', 'tomcat7'] //Optional, an array of package dependencies
     baseDir = project.buildDir// Optional, base directory to package, default: project.buildDir
     prefix = /opt/my-process // Optional, a path to prefix files when building package, default: root (/)
+    extraOptions = ['--vendor': 'MyCompany', '--maintainer': 'me'] // Optional, a map containing extra options
     filesArgs = ['dir1', 'file1']//Optional, array of files/dirs to package, relative to baseDir, default: .
 }
 
