@@ -26,7 +26,6 @@ class PackagingPlugin implements Plugin<Project> {
         project.packaging.packageDir = new File(project.buildDir, "/linux-package")
         project.task('debian', group: 'Build', type: DebianTask)
         project.task('rpm', group: 'Build', type: RpmTask)
-
     }
 
 }

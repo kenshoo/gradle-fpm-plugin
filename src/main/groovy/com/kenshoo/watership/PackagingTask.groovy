@@ -24,6 +24,7 @@ abstract class PackagingTask extends DefaultTask {
     def prefix
     def type
     def baseDir
+    def extraOptions
     def filesArgs
 
     PackagingTask(String type){
@@ -58,6 +59,11 @@ abstract class PackagingTask extends DefaultTask {
             fpmArgs << it
         }
         def packageFiles = getStageFiles()
+        if (extraOptions instanceof Map) {
+            extraOptions.each {
+                fpmArgs.addAll([it.key, it.value])
+            }
+        }
         fpmArgs.addAll(packageFiles)
         fpmArgs
     }
@@ -79,6 +85,7 @@ abstract class PackagingTask extends DefaultTask {
         dependencies = project.packaging.dependencies
         prefix = project.packaging.prefix
         filesArgs = project.packaging.filesArgs ? project.packaging.filesArgs : "."
+        extraOptions = project.packaging.extraOptions
         baseDir = project.packaging.baseDir? project.packaging.baseDir : project.buildDir
     }
 

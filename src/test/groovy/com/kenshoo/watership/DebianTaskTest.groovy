@@ -47,7 +47,22 @@ class DebianTaskTest extends Specification{
         when:
             task.execute()
         then:
-            new File(baseDir,'/build/linux-package/test_0.1.6_amd64.deb').exists()
+            new File(baseDir,'/build/linux-package/test_0.1.6-SNAPSHOT_amd64.deb').exists()
+    }
+
+    def 'use extraArgs given with a map'() {
+        given:
+        Project project = ProjectBuilder.builder().withProjectDir(baseDir).build()
+        project.apply plugin:  'java'
+        project.apply plugin: 'fpm-packaging'
+        project.version = '0.1'
+        project.packaging.extraOptions = ['-a': 'all']
+        def task = project.tasks["debian"]
+
+        when:
+        task.execute()
+        then:
+        new File(baseDir,'/build/linux-package/test_0.1_all.deb').exists()
     }
 
     def 'gets fpm not installed message'() {
