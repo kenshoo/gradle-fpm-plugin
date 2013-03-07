@@ -18,7 +18,7 @@ apply plugin: 'idea'
 apply plugin: 'signing'
 
 group = 'com.kenshoo'
-version = '0.2'
+version = '0.3'
 
 dependencies {
     compile gradleApi()
