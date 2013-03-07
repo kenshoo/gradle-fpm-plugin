@@ -15,6 +15,10 @@
 */
 apply plugin: 'groovy'
 apply plugin: 'idea'
+apply plugin: 'signing'
+
+group = 'com.kenshoo'
+version = '0.2'
 
 dependencies {
     compile gradleApi()
@@ -41,5 +45,61 @@ dependencies {
 
 }
 
-group = 'com.kenshoo'
-version = '0.2'
+task sourcesJar(type: Jar) {
+    from sourceSets.main.allSource
+    classifier = 'sources'
+}
+
+artifacts {
+    archives jar
+    archives sourcesJar
+}
+
+signing {
+    sign configurations.archives
+}
+
+uploadArchives {
+    repositories {
+        mavenDeployer {
+            beforeDeployment { MavenDeployment deployment -> signPom(deployment) }
+ 
+            repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2/") {
+              authentication(userName: sonatypeUsername, password: sonatypePassword)
+            }
+ 
+            pom.project {
+               name 'gradle-fpm-plugin'
+               packaging 'jar'
+               description 'This is an extension to gradle to allow create native packages using FPM'
+               url 'http://github.com/kenshoo/gradle-fpm-plugin'
+ 
+               scm {
+                   url 'scm:git@github.com:kenshoo/gradle-fpm-plugin.git'
+                   connection 'scm:git@github.com:kenshoo/gradle-fpm-plugin.git'
+                   developerConnection 'scm:git@github.com:kenshoo/gradle-fpm-plugin.git'
+               }
+ 
+               licenses {
+                   license {
+                       name 'The Apache Software License, Version 2.0'
+                       url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                       distribution 'repo'
+                   }
+               }
+ 
+               developers {
+                   developer {
+                       id 'liorhar'
+                       name 'Lior Harel'
+                   }
+                   developer {
+                       id 'talsalmona'
+                       name 'Tal Salmona'
+                   }
+               }
+           }
+        }
+    }
+}
+
