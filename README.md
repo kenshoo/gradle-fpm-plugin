@@ -13,7 +13,7 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath 'com.kenshoo:gradle-fpm:0.2'
+        classpath 'com.kenshoo:gradle-fpm:0.3'
     }
 }
 
