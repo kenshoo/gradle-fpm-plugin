@@ -38,5 +38,7 @@ class PackagingPluginExtension {
     @Input
     def extraOptions
 
+    def extraFlags
+
     boolean force
 }
