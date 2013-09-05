@@ -25,7 +25,9 @@ abstract class PackagingTask extends DefaultTask {
     def type
     def baseDir
     def extraOptions
+    def extraFlags
     def filesArgs
+    def force
 
     PackagingTask(String type){
         this.type = type
@@ -58,12 +60,19 @@ abstract class PackagingTask extends DefaultTask {
             fpmArgs << "-d"
             fpmArgs << it
         }
-        def packageFiles = getStageFiles()
+        if (force)
+            fpmArgs << '-f'
+        if (extraFlags instanceof List) {
+            extraFlags.each {
+                fpmArgs << it
+            }
+        }
         if (extraOptions instanceof Map) {
             extraOptions.each {
                 fpmArgs.addAll([it.key, it.value])
             }
         }
+        def packageFiles = getStageFiles()
         fpmArgs.addAll(packageFiles)
         fpmArgs
     }
@@ -86,7 +95,9 @@ abstract class PackagingTask extends DefaultTask {
         prefix = project.packaging.prefix
         filesArgs = project.packaging.filesArgs ? project.packaging.filesArgs : "."
         extraOptions = project.packaging.extraOptions
+        extraFlags = project.packaging.extraFlags
         baseDir = project.packaging.baseDir? project.packaging.baseDir : project.buildDir
+        force = project.packaging.force ?: false
     }
 
     def createOutDir() {
