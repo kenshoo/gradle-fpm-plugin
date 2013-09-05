@@ -37,4 +37,6 @@ class PackagingPluginExtension {
 
     @Input
     def extraOptions
+
+    boolean force
 }
