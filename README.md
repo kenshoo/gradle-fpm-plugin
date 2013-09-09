@@ -26,6 +26,7 @@ packaging {
     prefix = /opt/my-process // Optional, a path to prefix files when building package, default: root (/)
     extraOptions = ['--vendor': 'MyCompany', '--maintainer': 'me'] // Optional, a map containing extra options
     filesArgs = ['dir1', 'file1']//Optional, array of files/dirs to package, relative to baseDir, default: .
+    force     = [true / false ] //optional, force output even if overwrite, default: false
 }
 
 //to create a rpm package
