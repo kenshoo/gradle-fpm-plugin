@@ -20,6 +20,7 @@ import org.gradle.api.tasks.TaskAction
 
 abstract class PackagingTask extends DefaultTask {
     def FPM = "fpm"
+    def packageName
     def dependencies
     def prefix
     def type
@@ -53,7 +54,7 @@ abstract class PackagingTask extends DefaultTask {
 
     def getArgs() {
         def version = project.version
-        def fpmArgs = ["-t", type, "-s", "dir", "-n", "${project.name}", "-v", "$version","-C", baseDir]
+        def fpmArgs = ["-t", type, "-s", "dir", "-n", packageName, "-v", "$version","-C", baseDir]
         if (prefix)
             fpmArgs.addAll(["--prefix", prefix])
         dependencies.each() {
@@ -91,6 +92,7 @@ abstract class PackagingTask extends DefaultTask {
     }
 
     def initConfiguration() {
+        packageName = project.packaging.packageName ? project.packaging.packageName : project.name
         dependencies = project.packaging.dependencies
         prefix = project.packaging.prefix
         filesArgs = project.packaging.filesArgs ? project.packaging.filesArgs : "."

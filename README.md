@@ -13,7 +13,7 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath 'com.kenshoo:gradle-fpm:0.4'
+        classpath 'com.kenshoo:gradle-fpm:0.5'
     }
 }
 
@@ -21,6 +21,7 @@ apply plugin: 'fpm-packaging'
 
 //to create deb package
 packaging {
+    packageName = 'my-package' // Optional, default is project.name
     dependencies = ['openjdk-6-jre', 'tomcat7'] //Optional, an array of package dependencies
     baseDir = project.buildDir// Optional, base directory to package, default: project.buildDir
     prefix = /opt/my-process // Optional, a path to prefix files when building package, default: root (/)

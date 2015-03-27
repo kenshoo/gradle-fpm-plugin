@@ -24,12 +24,13 @@ import spock.lang.Specification
 class DebianTaskTest extends Specification{
     def baseDir
     def stageDir
+    def architecture
 
     def setup() {
         baseDir = new File(UUID.randomUUID().toString())
         stageDir  = new File(baseDir, "/build/package-stage")
         stageDir.mkdirs()
-
+        architecture = System.getProperty("os.arch")
     }
 
     def cleanup() {
@@ -47,7 +48,22 @@ class DebianTaskTest extends Specification{
         when:
             task.execute()
         then:
-            new File(baseDir,'/build/linux-package/test_0.1.6-SNAPSHOT_amd64.deb').exists()
+            new File(baseDir,"/build/linux-package/test_0.1.6-SNAPSHOT_${architecture}.deb").exists()
+    }
+
+    def 'package name overridden'() {
+        given:
+            Project project = ProjectBuilder.builder().withProjectDir(baseDir).build()
+            project.apply plugin:  'java'
+            project.apply plugin: 'fpm-packaging'
+            project.version = '0.1.6-SNAPSHOT'
+
+        when:
+            project.packaging.packageName = 'alternate-name'
+            def task = project.tasks["debian"]
+            task.execute()
+        then:
+            new File(baseDir,"/build/linux-package/alternate-name_0.1.6-SNAPSHOT_${architecture}.deb").exists()
     }
 
     def 'fail if target already exists'() {
@@ -58,7 +74,7 @@ class DebianTaskTest extends Specification{
             def task = project.tasks["debian"]
 
         when:
-            new File(baseDir,'/build/linux-package/test_unspecified_amd64.deb').with { file ->
+            new File(baseDir,"/build/linux-package/test_unspecified_${architecture}.deb").with { file ->
                 file.parentFile.mkdirs()
                 file.createNewFile()
             }
@@ -77,7 +93,7 @@ class DebianTaskTest extends Specification{
         when:
             project.packaging.force = true
         and:
-            def file = new File(baseDir,'/build/linux-package/test_unspecified_amd64.deb').with { file ->
+            def file = new File(baseDir,"/build/linux-package/test_unspecified_${architecture}.deb").with { file ->
                 file.parentFile.mkdirs()
                 file.createNewFile()
                 // make sure it's 0 bytes
@@ -99,7 +115,7 @@ class DebianTaskTest extends Specification{
         when:
             project.packaging.extraFlags = ['--force']
         and:
-            def file = new File(baseDir,'/build/linux-package/test_unspecified_amd64.deb').with { file ->
+            def file = new File(baseDir,"/build/linux-package/test_unspecified_${architecture}.deb").with { file ->
                 file.parentFile.mkdirs()
                 file.createNewFile()
                 // make sure it's 0 bytes
@@ -138,7 +154,7 @@ class DebianTaskTest extends Specification{
             task.execute()
         then:
             thrown(TaskExecutionException)
-            !(new File(baseDir,'/build/linux-package/test_0.1.6_amd64.deb').exists())
+            !(new File(baseDir,"/build/linux-package/test_0.1.6_${architecture}.deb").exists())
     }
 
     def 'file args contain relative path of files'() {

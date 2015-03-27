@@ -21,6 +21,9 @@ import org.gradle.api.tasks.OutputDirectory
 
 class PackagingPluginExtension {
     @Input
+    def packageName
+
+    @Input
     def dependencies = []
 
     @Input
