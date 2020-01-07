@@ -1,5 +1,5 @@
 pipeline {
-node('general-purpose-new') {
+agent {label 'general-purpose-new'}
      stages {
 
             stage('ls') {
@@ -8,6 +8,5 @@ node('general-purpose-new') {
                 }
             }
 	}
-}   // some block
 }
 
