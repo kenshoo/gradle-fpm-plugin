@@ -9,7 +9,6 @@ agent {label 'general-purpose-new'}
                     userRemoteConfigs: [[credentialsId: 'kenshoo-build-key', url: 'git@github.com:kenshoo/puppet-module-graylog2.git']]]
                     )
 		     echo 'Hello world!'
-                      sh script: 'ls'
                 }
             }
 	}
