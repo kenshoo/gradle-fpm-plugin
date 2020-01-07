@@ -1,11 +1,10 @@
 pipeline {
-    agent {node { label "nightly-general-docker"}}
-    options { timestamps() }
+    agent any
     stages {
 
             stage('ls') {
                 steps {
-			sh label: '', script: 'ls'
+			echo 'Hello world!'
                 }
             }
 	}
