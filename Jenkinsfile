@@ -1,6 +1,6 @@
 pipeline {
-    agent any
-    stages {
+node('general-purpose-new') {
+     stages {
 
             stage('ls') {
                 steps {
@@ -8,4 +8,6 @@ pipeline {
                 }
             }
 	}
+}   // some block
 }
+
