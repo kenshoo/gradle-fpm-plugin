@@ -3,12 +3,9 @@ pipeline {
     options { timestamps() }
     stages {
 
-            stage('checkout') {
+            stage('ls') {
                 steps {
-
-					sh '''
-						ls
-					   '''
+			sh label: '', script: 'ls'
                 }
             }
 	}
