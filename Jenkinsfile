@@ -1,5 +1,5 @@
 pipeline {
-    agent {node {"nightly-general-docker"}}
+    agent {node { label "nightly-general-docker"}}
     options { timestamps() }
     stages {
 
