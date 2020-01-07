@@ -6,8 +6,7 @@ pipeline {
             stage('checkout') {
                 steps {
 
-checkout changelog: false, poll: false, scm: [$class: 'GitSCM', branches: [[name: 'master']], doGenerateSubmoduleConfigurations: false, extensions: [], submoduleCfg: [], userRemoteConfigs: [[credentialsId: 'kenshoo-build-key', url: 'git@github.com:kenshoo/puppet-module-graylog2.git']]]
-
+checkout changelog: false, poll: false, scm: [$class: 'GitSCM', branches: [[name: '*/master']], doGenerateSubmoduleConfigurations: false, extensions: [], submoduleCfg: [], userRemoteConfigs: [[credentialsId: 'kenshoo-build-key', name: 'origin', refspec: '+refs/heads/master:refs/remotes/origin/master', url: 'git@github.com:kenshoo/puppet-module-graylog2.git']]]
 					sh '''
 						ls
 					   '''
