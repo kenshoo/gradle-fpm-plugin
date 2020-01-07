@@ -1,5 +1,4 @@
 pipeline {
-    agent { node { label 'general-purpose-new' }}
     options { timestamps() }
     stages {
 
