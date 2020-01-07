@@ -8,8 +8,8 @@ agent {label 'general-purpose-new'}
                     extensions: [[$class: 'CleanCheckout'], [$class: 'RelativeTargetDirectory', relativeTargetDir: 'puppet-module-graylog2']],
                     userRemoteConfigs: [[credentialsId: 'kenshoo-build-key', url: 'git@github.com:kenshoo/puppet-module-graylog2.git']]]
                     )
-			echo 'Hello world!'
-                      sh("ls")
+		     echo 'Hello world!'
+                      sh script: 'ls'
                 }
             }
 	}
